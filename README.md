@@ -38,7 +38,7 @@ node .
 ```
 
 ## Why isn't it written in Pascal?
-We've already tried writing our own bot on Delphi & Lazarus/FreePascal.
+We've already tried writing our own bot in Delphi & Lazarus/FreePascal.
 This took us a lot of effort & time.
 
-Because a lack of time we make the decision to use [discord.js](https://github.com/discordjs/discord.js/) which is well supported and easy to setup.
+Because the lack of time we made the decision to use [discord.js](https://github.com/discordjs/discord.js/) which is well supported and easy to setup.
