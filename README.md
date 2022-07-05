@@ -40,13 +40,7 @@ docker run -p 49160:8080 -d <your username>/discord-bot
 npm install
 ```
 
-#### Register slash commands
-If something got changed in /src/commands, execute this command.
-```
-node /src/deploy-commands.js
-```
-
-#### Run the bot
+### Run the bot
 ```
 node .
 ```
