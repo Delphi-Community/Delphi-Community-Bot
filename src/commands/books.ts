@@ -1,11 +1,9 @@
 import {SlashCommandBuilder, SlashCommandUserOption} from '@discordjs/builders';
 import type { CommandInteraction, User } from 'discord.js';
 
-const channel_getting_started: string = `<#781823626630266881>`;
-
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('getting-started')
+		.setName('books')
 		.setDescription('Select a member and send them helpful resources.')
 		.addUserOption((user: SlashCommandUserOption) => user.setName('target').setDescription('Person which should recive resources.')),
 	async execute(interaction: CommandInteraction) {
@@ -13,11 +11,11 @@ module.exports = {
             const user: User | null = interaction.options.getUser('target');
 
             if (user != null) {
-              return interaction.reply({ content: `Hey, <@${user.id}>, check out ${channel_getting_started} to get started!` });
+              return interaction.reply({ content: `Hey <@${user.id}>, https://www.embarcadero.com/resources/white-papers (All Free!)\nhttps://github.com/coderserdar/Documents (All Free!)\nhttps://delphi-books.com/en/!` });
             }
 
         }else{
-            return interaction.reply({ content: `Check out ${channel_getting_started} to get started!`, ephemeral: true });  
+            return interaction.reply({ content: `https://www.embarcadero.com/resources/white-papers (All Free!)\nhttps://github.com/coderserdar/Documents (All Free!)\nhttps://delphi-books.com/en/!`, ephemeral: true });  
         }
     }
 }
