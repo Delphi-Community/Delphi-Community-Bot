@@ -21,18 +21,32 @@ Features
 
 Install [Node.js®](https://nodejs.org/) on your machine.
 
-### Install dependencies
+## Docker
+
+Build the image
+```
+docker build . -t <your username>/discord-bot
+```
+
+Run container
+```
+docker run -p 49160:8080 -d <your username>/discord-bot
+```
+
+## Manual installation
+
+#### Install dependencies
 ```
 npm install
 ```
 
-### Register slash commands
+#### Register slash commands
 If something got changed in /src/commands, execute this command.
 ```
 node /src/deploy-commands.js
 ```
 
-### Run the bot
+#### Run the bot
 ```
 node .
 ```
