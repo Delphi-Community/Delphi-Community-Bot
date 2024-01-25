@@ -27,15 +27,15 @@ Contributions from community members are the backbone of our server. Whether you
 
 # Bot
 
-## NodeJs Modules
+NodeJS Modules
 
-Winston: Logging
-sqlite3: Data storage
-discord.js: Discord integration
-dotenv: Environment variables management
-node-cron: Task scheduling
-rss-parser: RSS feed parsing
-winston-daily-rotate-file: Log file rotation
+- Winston: Logging
+- sqlite3: Data storage
+- discord.js: Discord integration
+- dotenv: Environment variables management
+- node-cron: Task scheduling
+- rss-parser: RSS feed parsing
+- winston-daily-rotate-file: Log file rotation
 
 
 ---
