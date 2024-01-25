@@ -27,7 +27,10 @@ Contributions from community members are the backbone of our server. Whether you
 
 # Bot
 
+## NodeJs Modules
 
+Winston - Used for logging
+sqlite3 - Used to store permanent data
 
 ---
 
