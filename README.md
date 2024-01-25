@@ -27,6 +27,25 @@ Contributions from community members are the backbone of our server. Whether you
 
 # Bot
 
+## Installation
+
+Install node modules
+```
+npm install
+```
+
+Set environement vars on your system or copy create .env file. [Check out .env.sample](https://github.com/Delphi-Community/Delphi-Community-Bot/blob/main/.env.sample).
+
+Register SlashCommands
+```sh
+node .\deploy-commands.js
+```
+
+Run bot
+```sh
+node .
+```
+
 ## Features
 - RSS cronjob (Tracks RSS feeds and notifys the bot every 10 minutes, admins only)
 
