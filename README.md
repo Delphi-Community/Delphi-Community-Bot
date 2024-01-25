@@ -27,7 +27,15 @@ Contributions from community members are the backbone of our server. Whether you
 
 # Bot
 
-NodeJS Modules
+## Features
+- RSS cronjob (Tracks RSS feeds and notifys the bot every 10 minutes, admins only)
+
+## Commands
+- rss list
+- rss add [url] [channel]
+- rss remove [id]
+
+## NodeJS Modules
 
 - Winston: Logging
 - sqlite3: Data storage
