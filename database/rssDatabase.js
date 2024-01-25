@@ -48,6 +48,26 @@ const addRssToStorage = (rssUrl, channelId) => {
     });
 };
 
+const removeRssFromStorage = (id) => {
+    return new Promise((resolve, reject) => {
+        initializeDatabase().then(database => {
+            const query = 'DELETE FROM rss_channels WHERE id = ?';
+            database.run(query, [id], (err) => {
+                if (err) {
+                    logger.error(`Error removing RSS feed from database: ${err.message}`);
+                    reject(err);
+                } else {
+                    logger.info(`RSS feed with ID ${id} removed from database`);
+                    resolve();
+                }
+            });
+        }).catch(err => {
+            logger.error(`Error initializing database: ${err.message}`);
+            reject(err);
+        });
+    });
+};
+
 const listRssFromStorage = () => {
     return new Promise((resolve, reject) => {
         initializeDatabase().then(database => {
@@ -70,5 +90,6 @@ const listRssFromStorage = () => {
 
 module.exports = {
     addRssToStorage,
-    listRssFromStorage
+    listRssFromStorage,
+    removeRssFromStorage
 };

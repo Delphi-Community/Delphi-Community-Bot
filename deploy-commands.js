@@ -44,6 +44,6 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
 		// And of course, make sure you catch and log any errors!
-		console.error(error);
+		logger.error(error);
 	}
 })();

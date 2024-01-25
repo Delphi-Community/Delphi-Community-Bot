@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require(`discord.js`);
-const { addRssToStorage, listRssFromStorage } = require(`../../database/rssDatabase`); // Adjust the path as necessary
-
+const { addRssToStorage, listRssFromStorage, removeRssFromStorage } = require(`../../database/rssDatabase`); // Adjust the path as necessary
+const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -51,8 +51,8 @@ module.exports = {
               try {
                   await addRssToStorage(rssUrl, channel.id);
                   await interaction.reply({ content: `RSS feed ${rssUrl} added to channel ${channel.name}.!`, ephemeral: true });
-              } catch (error) {
-                  console.error(error);
+                } catch (error) {
+                  logger.error(error);
                   await interaction.reply(`Failed to add the RSS feed. Please try again later.`);
               }
               break;
@@ -76,17 +76,22 @@ module.exports = {
         
                 await interaction.reply({ embeds: [embed] });
                 } catch (error) {
-                    console.error(error);
+                  logger.error(error);
                     await interaction.reply({ content: `Failed to retrieve RSS feeds. Please try again later.`, ephemeral: true });
                 }
             break;
 
             case `remove`:
-                // Handle remove logic
-                const id = interaction.options.getInteger(`id`);
-                // Remove RSS logic here
-                await interaction.reply(`RSS entry with ID ${id} removed.`);
-                break;
+              const feedId = interaction.options.getInteger('id');
+
+              try {
+                  await removeRssFromStorage(feedId);
+                  await interaction.reply({ content: `RSS feed with ID ${feedId} has been removed.`, ephemeral: true });
+              } catch (error) {
+                  logger.error(error);
+                  await interaction.reply(`Failed to remove the RSS feed. Please try again later.`);
+              }
+              break;
 
             default:
                 await interaction.reply(`Invalid command.`);
