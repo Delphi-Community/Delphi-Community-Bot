@@ -29,8 +29,14 @@ Contributions from community members are the backbone of our server. Whether you
 
 ## NodeJs Modules
 
-Winston - Used for logging
-sqlite3 - Used to store permanent data
+Winston: Logging
+sqlite3: Data storage
+discord.js: Discord integration
+dotenv: Environment variables management
+node-cron: Task scheduling
+rss-parser: RSS feed parsing
+winston-daily-rotate-file: Log file rotation
+
 
 ---
 
