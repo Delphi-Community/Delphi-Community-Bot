@@ -55,6 +55,7 @@ node .
 - rss list
 - rss add [url] [channel]
 - rss remove [id]
+- rss runcronjob
 
 ## NodeJS Modules
 
