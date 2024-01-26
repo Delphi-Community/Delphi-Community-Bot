@@ -36,6 +36,8 @@ npm install
 
 Set environement vars on your system or copy create .env file. [Check out .env.sample](https://github.com/Delphi-Community/Delphi-Community-Bot/blob/main/.env.sample).
 
+Invite the bot: https://discord.com/api/oauth2/authorize?client_id=APP_ID&permissions=8&scope=bot+applications.commands
+
 Register SlashCommands
 ```sh
 node .\deploy-commands.js
@@ -63,6 +65,7 @@ node .
 - node-cron: Task scheduling
 - rss-parser: RSS feed parsing
 - winston-daily-rotate-file: Log file rotation
+- winston-transport-discord: Log file mirror for discord
 
 
 ---

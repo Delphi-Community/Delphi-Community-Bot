@@ -16,7 +16,8 @@
     "rss-parser": "^3.13.0",
     "sqlite3": "^5.1.7",
     "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "winston-transport-discord": "^1.0.3"
   },
   "devDependencies": {
     "eslint": "^8.56.0"

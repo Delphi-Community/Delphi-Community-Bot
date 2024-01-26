@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require(`discord.js`);
 const { addRssToStorage, listRssFromStorage, removeRssFromStorage } = require(`../../database/rssDatabase`); // Adjust the path as necessary
 const logger = require('../../utils/logger');
+const { runJob } = require('../../cronjobs/cronService.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -28,6 +29,11 @@ module.exports = {
             subcommand
                 .setName(`list`)
                 .setDescription(`List all RSS entries`)
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName(`runcronjob`)
+                .setDescription(`Manual check for new RSS entries`)
         )
         .addSubcommand(subcommand =>
             subcommand
@@ -79,6 +85,17 @@ module.exports = {
                   logger.error(error);
                     await interaction.reply({ content: `Failed to retrieve RSS feeds. Please try again later.`, ephemeral: true });
                 }
+            break;
+
+            case `runcronjob`:
+                try {
+                    await runJob(); // Trigger the cron job function
+                    await interaction.reply({ content: 'Cron job executed successfully.', ephemeral: true });
+                } catch (error) {
+                    logger.error(error);
+                    await interaction.reply({ content: 'Error occurred while executing the cron job.', ephemeral: true });
+                }
+                break;
             break;
 
             case `remove`:

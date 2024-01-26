@@ -1,15 +1,14 @@
 const cron = require('node-cron');
 const logger = require('../utils/logger');
-const { fetchAndStoreRSSFeed } = require('./rss/rssService');
-// const config = require('./config');
+const { fetchAndStoreRSSFeed } = require('./RSS/rssService');
 
 function startCronJob() {
-    cron.schedule('*/10 * * * *', () => { // 10 is interval in minutes
-      logger.info('Checking for new RSS entries...');
-        // config.RSS_FEED_URLS.forEach(url => {
-        //     fetchAndStoreRSSFeed(url);
-        // });
-    });
+  cron.schedule('*/10 * * * *', runJob);
 }
 
-module.exports = { startCronJob };
+async function runJob() {
+  logger.info('Checking for new RSS entries...');
+  await fetchAndStoreRSSFeed();
+}
+
+module.exports = { startCronJob, runJob };
