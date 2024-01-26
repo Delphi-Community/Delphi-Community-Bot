@@ -13,7 +13,8 @@ const initializeDatabase = () => {
                     database.run(`CREATE TABLE IF NOT EXISTS rss_channels (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         url TEXT,
-                        channel_id TEXT
+                        channel_id TEXT,
+                        latest_entry_date TEXT
                     )`, err => {
                         if (err) {
                             reject(err);
@@ -88,8 +89,29 @@ const listRssFromStorage = () => {
     });
 };
 
+const updateLatestEntryDate = (feedId, newDate) => {
+    return new Promise((resolve, reject) => {
+        initializeDatabase().then(database => {
+            const query = 'UPDATE rss_channels SET latest_entry_date = ? WHERE id = ?';
+            database.run(query, [newDate, feedId], (err) => {
+                if (err) {
+                    logger.error(`Error updating latest entry date in database: ${err.message}`);
+                    reject(err);
+                } else {
+                    logger.info(`Updated latest entry date for feed ID ${feedId}`);
+                    resolve();
+                }
+            });
+        }).catch(err => {
+            logger.error(`Error initializing database: ${err.message}`);
+            reject(err);
+        });
+    });
+};
+
 module.exports = {
     addRssToStorage,
     listRssFromStorage,
-    removeRssFromStorage
+    removeRssFromStorage,
+    updateLatestEntryDate
 };
