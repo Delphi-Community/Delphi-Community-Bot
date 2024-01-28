@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Collection } = require('discord.js');
 const logger = require('./utils/logger');
-const client = require('./utils/clientInstance');
+const { client } = require('./utils/clientInstance');
 
 
 //Commands

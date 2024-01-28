@@ -8,7 +8,7 @@ function startCronJob() {
 
 async function runJob() {
   logger.info('Checking for new RSS entries...');
-  await fetchAndStoreRSSFeed;
+  await fetchAndStoreRSSFeed();
 }
 
 module.exports = { startCronJob, runJob };
