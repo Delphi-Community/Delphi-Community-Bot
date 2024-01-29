@@ -8,7 +8,6 @@ module.exports = {
     execute(client) {
 			logger.info(`Ready! Logged in as ${client.user.tag}`);
 
-        // Initialize the database and then start the cron job
-        // startCronJob();
+        startCronJob();
     },
 };
