@@ -53,7 +53,6 @@ node .
 
 ## Commands
 - ping
-
 - rss list
 - rss add [url] [channel]
 - rss remove [id] (get the id from rss list)
