@@ -49,12 +49,14 @@ node .
 ```
 
 ## Features
-- RSS cronjob (Tracks RSS feeds and notifys the bot every 10 minutes, admins only)
+- RSS cronjob (Tracks RSS feeds and notifys a channel (forum) every 10 minutes, admins only)
 
 ## Commands
+- ping
+
 - rss list
 - rss add [url] [channel]
-- rss remove [id]
+- rss remove [id] (get the id from rss list)
 - rss runcronjob
 
 ## NodeJS Modules

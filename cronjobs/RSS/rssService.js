@@ -12,38 +12,22 @@ const { client } = require('../../utils/clientInstance');
 
 async function processRssFeed(feed) {
     try {
-
         const rssData = await parser.parseURL(feed.url);
         for (const item of rssData.items) {
             const pubDate = new Date(item.pubDate);
             const latestEntryDate = feed.latest_entry_date ? new Date(feed.latest_entry_date) : new Date(0);
             
-
-            const channel = client.channels.cache.get(feed.channel_id);
-
-            // Consider updating the latest entry date here
-            // await updateLatestEntryDate(feed.id, pubDate.toISOString());
-                
-
-            
             if (pubDate > latestEntryDate) {
                 const channel = client.channels.cache.get(feed.channel_id);
-                if (channel && channel.type === 15) {
-                    //channel.type === 15 GUILD FORUM
-                
+                if (channel && channel.type === 15) { //channel.type === 15 GUILD FORUM
+                    
                     await channel.threads.create({
                         name: item.title,
                         message: { content: item.content },
-                        autoArchiveDuration: 60, // Replace with actual tag IDs
+                        autoArchiveDuration: 60, 
                     });
                     
-                    // await channel.threads.create({ name: 'Test12345', message: { content: 'Dies ist ein Test!' } });
-
-                    // await channel.threads.create(
-                    //     { name: 'Post name', message: { content: 'Message content' } }
-                    //     );
-                    // Consider updating the latest entry date here
-                    // await updateLatestEntryDate(feed.id, pubDate.toISOString());
+                    await updateLatestEntryDate(feed.id, pubDate.toISOString());
                 }
             }
         }
