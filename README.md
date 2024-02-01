@@ -53,10 +53,14 @@ node .
 
 ## Commands
 - ping
+- format (converts a message to a pascal code block)
 - rss list
 - rss add [url] [channel]
 - rss remove [id] (get the id from rss list)
 - rss runcronjob
+
+### Message commands
+@bot code somecode (converts a message to a pascal code block)
 
 ## NodeJS Modules
 

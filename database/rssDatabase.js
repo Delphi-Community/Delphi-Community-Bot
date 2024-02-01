@@ -38,7 +38,6 @@ const addRssToStorage = (rssUrl, channelId) => {
                     logger.error(`Error adding RSS feed to database: ${err.message}`);
                     reject(err);
                 } else {
-                    logger.info(`RSS feed added to database: URL = ${rssUrl}, Channel ID = ${channelId}`);
                     resolve();
                 }
             });
@@ -58,7 +57,6 @@ const removeRssFromStorage = (id) => {
                     logger.error(`Error removing RSS feed from database: ${err.message}`);
                     reject(err);
                 } else {
-                    logger.info(`RSS feed with ID ${id} removed from database`);
                     resolve();
                 }
             });
@@ -78,7 +76,6 @@ const listRssFromStorage = () => {
                     logger.error(`Error querying RSS feeds from database: ${err.message}`);
                     reject(err);
                 } else {
-                    logger.info('Retrieved RSS feeds from database');
                     resolve(rows);
                 }
             });
@@ -98,7 +95,6 @@ const updateLatestEntryDate = (feedId, newDate) => {
                     logger.error(`Error updating latest entry date in database: ${err.message}`);
                     reject(err);
                 } else {
-                    logger.info(`Updated latest entry date for feed ID ${feedId}`);
                     resolve();
                 }
             });

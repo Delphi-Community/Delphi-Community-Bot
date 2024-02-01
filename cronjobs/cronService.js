@@ -7,7 +7,6 @@ function startCronJob() {
 }
 
 async function runJob() {
-  logger.info('Checking for new RSS entries...');
   await fetchAndStoreRSSFeed();
 }
 
