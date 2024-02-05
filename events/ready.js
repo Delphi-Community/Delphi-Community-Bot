@@ -6,8 +6,10 @@ module.exports = {
     name: Events.ClientReady,
     once: true,
     execute(client) {
-			logger.info(`Ready! Logged in as ${client.user.tag}`);
+        //RSS-Cronjob
+        startCronJob(); 
 
-        startCronJob();
+        //Start telegram bridge
+        const { telegramBot, discordClient } = require('../utils/telegrambridge');
     },
 };
