@@ -9,7 +9,7 @@ const telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, {polling: tr
 
 // Telegram to Discord forwarding
 telegramBot.on('message', (msg) => {
-    if (msg.chat.id.toString() === process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID) {
+    if (msg.chat.id.toString() === process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID && msg.text) {
         const telegramUser = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
         const embed = new EmbedBuilder()
             .setDescription(`**${telegramUser}:** ${msg.text}`)
@@ -26,9 +26,7 @@ telegramBot.on('message', (msg) => {
 
 // Discord to Telegram forwarding
 client.on('messageCreate', async message => {
-    // Check if the message is from the specific Discord channel
     if (message.channelId === process.env.TELEGRAM_BOT_DISCORD_CHANNEL) {
-        // Prevent bot from sending its own messages to avoid loops
         if (message.author.bot) return;
 
         const msgContent = `${message.author.username}: ${message.content}` || 'This message contains an attachment or embed and cannot be displayed.';
