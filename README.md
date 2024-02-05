@@ -50,6 +50,7 @@ node .
 
 ## Features
 - RSS cronjob (Tracks RSS feeds and notifys a channel (forum) every 10 minutes, admins only)
+- Telegram bridge both directions
 
 ## Commands
 - ping
@@ -64,14 +65,15 @@ node .
 
 ## NodeJS Modules
 
-- Winston: Logging
 - sqlite3: Data storage
 - discord.js: Discord integration
 - dotenv: Environment variables management
 - node-cron: Task scheduling
 - rss-parser: RSS feed parsing
+- winston: Logging
 - winston-daily-rotate-file: Log file rotation
 - winston-transport-discord: Log file mirror for discord
+- node-telegram-bot-api: Used for telegram bridge
 
 
 ---
