@@ -56,8 +56,10 @@ telegramBot.on('message', async (msg) => {
         }
 
         const discordChannel = client.channels.cache.get(process.env.TELEGRAM_BOT_DISCORD_CHANNEL);
-        if (discordChannel) {
-            await discordChannel.send({ embeds: [embed] });
+        if (discordChannel){
+            if (msg.photo || msg.document || msg.text) {
+                await discordChannel.send({ embeds: [embed] });
+            }
         } else {
             logger.error('Discord channel not found');
         }
