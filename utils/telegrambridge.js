@@ -24,42 +24,71 @@ async function getFileUrl(fileId) {
 // Telegram to Discord forwarding
 telegramBot.on('message', async (msg) => {
     if (msg.chat.id.toString() === process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID) {
-        const telegramUser = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
-        let description = `**${telegramUser}:** `;
+        let messageContent = '';
+        const telegramUser = msg.from.username ? `${msg.from.username}` : msg.from.first_name;
 
-        // Check if the message contains text
-        if (msg.text) {
-            description += msg.text;
+        // Construct the basic message content
+        messageContent += `**${telegramUser}:** `;
+
+        // Check if the message contains text and append it
+        if (msg.text && msg.entities) {
+            // Ensure msg.entities is defined and has elements
+            msg.entities.sort((a, b) => a.offset - b.offset);
+        
+            let modifiedText = '';
+            let lastIndex = 0;
+        
+            msg.entities.forEach(entity => {
+                if (entity.type === "pre" && entity.language) {
+                    const beforeCodeBlock = msg.text.substring(lastIndex, entity.offset);
+                    const codeBlockText = msg.text.substring(entity.offset, entity.offset + entity.length);
+                    const codeBlock = `\`\`\`${entity.language}\n${codeBlockText}\`\`\``;
+                    
+                    modifiedText += beforeCodeBlock + codeBlock;
+                    lastIndex = entity.offset + entity.length;
+                }
+            });
+        
+            if (lastIndex < msg.text.length) {
+                modifiedText += msg.text.substring(lastIndex);
+            }
+            messageContent += modifiedText;
+        } else {
+            messageContent += msg.text;
+        }
+        
+
+        // Handle photos separately
+        if (msg.photo) {
+            // Get the highest quality photo file_id
+            const fileId = msg.photo[msg.photo.length - 1].file_id;
+            const fileUrl = await getFileUrl(fileId); // Ensure getFileUrl is implemented to fetch the actual URL
+
+            // Append the photo URL to the message
+            if (fileUrl) {
+                messageContent += `\n[Image](${fileUrl})`;
+            } else {
+                messageContent += "\nImage content could not be retrieved.";
+            }
         }
 
-        // Initialize EmbedBuilder with default description
-        const embed = new EmbedBuilder()
-            .setDescription(description)
-            .setColor(0x0088cc);
+        // Handle documents (including non-image files) separately
+        if (msg.document) {
+            const fileId = msg.document.file_id;
+            const fileUrl = await getFileUrl(fileId); // Ensure getFileUrl is implemented to fetch the actual URL
 
-        // Handle photos and documents separately
-        if (msg.photo || msg.document) {
-            // Get the highest quality photo or document file_id
-            const fileId = msg.photo ? msg.photo[msg.photo.length - 1].file_id : msg.document.file_id;
-            const fileUrl = await getFileUrl(fileId);
-
+            // Append the document URL to the message
             if (fileUrl) {
-                if (msg.photo) {
-                  embed.setDescription(description).setThumbnail(fileUrl);
-                } else {
-                  embed.setDescription(`${description} ${fileUrl}`);  
-                }
-                
+                messageContent += `\n[Document](${fileUrl})`;
             } else {
-                embed.setDescription(description + "\nImage content could not be retrieved.");
+                messageContent += "\nDocument content could not be retrieved.";
             }
         }
 
         const discordChannel = client.channels.cache.get(process.env.TELEGRAM_BOT_DISCORD_CHANNEL);
-        if (discordChannel){
-            if (msg.photo || msg.document || msg.text) {
-                await discordChannel.send({ embeds: [embed] });
-            }
+        if (discordChannel) {
+            // Send the constructed message content as a normal text message
+            await discordChannel.send(messageContent);
         } else {
             logger.error('Discord channel not found');
         }
@@ -67,39 +96,37 @@ telegramBot.on('message', async (msg) => {
 });
 
 
+
 // Discord to Telegram forwarding
 client.on('messageCreate', async message => {
     if (message.channelId === process.env.TELEGRAM_BOT_DISCORD_CHANNEL) {
         if (message.author.bot) return; // Ignore bot messages
+        let msgContent = message.content.replace(/<@!?(\d+)>/g, (match, userId) => {
+            const user = message.guild.members.cache.get(userId);
+            return user ? `@${user.user.username}` : "@someone";
+        });
 
-        let msgContent = message.content ? `${message.author.username}: ${message.content}` : '';
+        msgContent = `${message.author.username}: ${msgContent}`;
 
-        // Check if there are attachments in the message
+        // Handle attachments
         if (message.attachments.size > 0) {
             const attachmentsUrls = message.attachments.map(attachment => {
-                // Get the URL without any query parameters
-                const url = new URL(attachment.url);
-                return `${url.protocol}//${url.hostname}${url.pathname}`;
+                return attachment.url;
             });
-            // Append each cleaned attachment URL to the message content
-            const attachmentsMsg = attachmentsUrls.join('\n');
-            msgContent += (msgContent ? '\n' : '') + attachmentsMsg;
+            msgContent += `\n${attachmentsUrls.join('\n')}`;
         }
 
-        // If there's no text or attachment, set a default message
         if (!msgContent.trim()) {
             msgContent = 'This message contains an attachment or embed and cannot be displayed.';
         }
 
-        // Send the composed message or cleaned attachment URLs to Telegram
+        // Send to Telegram
         try {
-            await telegramBot.sendMessage(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, msgContent);
+            await telegramBot.sendMessage(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, msgContent, {parse_mode: 'MarkdownV2'});
         } catch (error) {
             logger.error('Failed to send message to Telegram:', error);
         }
     }
 });
-
-
 
 module.exports = { telegramBot, client };
