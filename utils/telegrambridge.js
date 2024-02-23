@@ -52,8 +52,11 @@ telegramBot.on('message', async (msg) => {
             if (lastIndex < msg.text.length) {
                 modifiedText += msg.text.substring(lastIndex);
             }
-            messageContent += modifiedText;
-        } else {
+
+            if (modifiedText) {
+                messageContent += modifiedText;
+            }
+        } else if (msg.text){
             messageContent += msg.text;
         }
         
@@ -85,6 +88,8 @@ telegramBot.on('message', async (msg) => {
             }
         }
 
+        messageContent = messageContent.replace(/@everyone/g, "@_everyone").replace(/@here/g, "@_here");
+
         const discordChannel = client.channels.cache.get(process.env.TELEGRAM_BOT_DISCORD_CHANNEL);
         if (discordChannel) {
             // Send the constructed message content as a normal text message
@@ -101,32 +106,61 @@ telegramBot.on('message', async (msg) => {
 client.on('messageCreate', async message => {
     if (message.channelId === process.env.TELEGRAM_BOT_DISCORD_CHANNEL) {
         if (message.author.bot) return; // Ignore bot messages
-        let msgContent = message.content.replace(/<@!?(\d+)>/g, (match, userId) => {
-            const user = message.guild.members.cache.get(userId);
-            return user ? `@${user.user.username}` : "@someone";
-        });
+
+        let msgContent = message.content
+            .replace(/<a?:[^:]+:\d+>/g, '') // Remove custom emojis
+            .replace(/<@!?(\d+)>/g, (match, userId) => { // Replace user mentions
+                const user = message.guild.members.cache.get(userId);
+                return user ? `@${user.user.username}` : "@someone";
+            });
+
+        // Escape MarkdownV2 special characters
+        msgContent = msgContent.replace(/([_\-\.>])/g, '\\$&');
 
         msgContent = `${message.author.username}: ${msgContent}`;
-
-        // Handle attachments
-        if (message.attachments.size > 0) {
-            const attachmentsUrls = message.attachments.map(attachment => {
-                return attachment.url;
-            });
-            msgContent += `\n${attachmentsUrls.join('\n')}`;
+        
+        if (!msgContent.trim() && message.attachments.size === 0) {
+            return; // Skip if there's nothing to send
         }
 
-        if (!msgContent.trim()) {
-            msgContent = 'This message contains an attachment or embed and cannot be displayed.';
+        // Send the text content to Telegram, if any
+        if (msgContent.trim()) {
+            try {
+                await telegramBot.sendMessage(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, msgContent, {parse_mode: 'MarkdownV2'});
+            } catch (error) {
+                logger.error('Failed to send message text to Telegram:', error);
+            }
         }
 
-        // Send to Telegram
-        try {
-            await telegramBot.sendMessage(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, msgContent, {parse_mode: 'MarkdownV2'});
-        } catch (error) {
-            logger.error('Failed to send message to Telegram:', error);
-        }
+        // Send attachments
+        message.attachments.forEach(async (attachment) => {
+            // Determine if the attachment is an image (for simplicity, checking by common image file extensions)
+            if (/\.(jpeg|jpg|png|gif)$/i.test(attachment.name)) {
+                // Send as a photo
+                try {
+                    await telegramBot.sendPhoto(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, attachment.url);
+                } catch (error) {
+                    logger.error('Failed to send photo to Telegram:', error);
+                }
+            } else {
+                // Send as a document
+                try {
+                    await telegramBot.sendMessage(process.env.TELEGRAM_BOT_TELEGRAM_GROUP_ID, attachment.url);
+                } catch (error) {
+                    logger.error('Failed to send document to Telegram:' + attachment.url, error);
+                }
+            }
+        });
     }
 });
+
+
+
+
+
+
+
+
+
 
 module.exports = { telegramBot, client };
